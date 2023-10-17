@@ -115,7 +115,7 @@ class RqChallengeApplicationTests {
 
         ResponseEntity<Employee> res = employeeController.getEmployeeById("99");
 
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR,res.getStatusCode());
+        assertEquals(HttpStatus.NOT_FOUND,res.getStatusCode());
     }
     @Test
     void testGetEmployeeByIdReturnsHTTPOK() throws IOException {
@@ -126,10 +126,9 @@ class RqChallengeApplicationTests {
 
         ResponseEntity<Employee> expectedResponse = ResponseEntity.ok(emp);
         Map<String, Object> map = new HashMap<>();
-        List<LinkedHashMap<String,Object>> retValue = new ArrayList<>();
-        retValue.add(empMap);
-        map.put("data", retValue);
-        when(customRestTemplate.getForObject(eq("https://dummy.restapiexample.com/api/v1/employees"), eq(Map.class))).thenReturn(map);
+        map.put("data", empMap);
+        map.put("status", "success");
+        when(customRestTemplate.getForObject(eq("https://dummy.restapiexample.com/api/v1/employee/1"), eq(Map.class))).thenReturn(map);
 
         var response = employeeController.getEmployeeById("1");
 

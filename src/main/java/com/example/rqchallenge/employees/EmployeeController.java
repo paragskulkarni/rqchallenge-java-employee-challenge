@@ -48,16 +48,16 @@ public class EmployeeController implements IEmployeeController {
 
     @Override
     public ResponseEntity<Employee> getEmployeeById(String id) {
-        List<Employee> employees = getAllEmp();
-        Integer idInt = Integer.parseInt(id);
-        if (employees == null)
-            return ResponseEntity.internalServerError().build();
-
-        for (Employee emp : employees) {
-            if (emp.getId() == idInt)
+        String uri = baseURI + "/employee/" + id;
+        try {
+            Map response = restTemplate.getForObject(uri,Map.class);
+            if (response != null && response.get("status").equals("success")) {
+                Employee emp = new Employee((Map<String, Object>) response.get("data"));
                 return ResponseEntity.ok(emp);
+            }
+        } catch (RestClientException ex) {
+            logger.error(ex.getMessage());
         }
-
         return ResponseEntity.notFound().build();
     }
 
